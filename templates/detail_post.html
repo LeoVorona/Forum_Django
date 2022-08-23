@@ -10,8 +10,10 @@
         <img src="{{ post.image.url }}" alt="No image" width="10%" height="10%">
     {% endif %}    
     <hr>
-    <a href="{% url 'update_post' post.pk %}" class="btn btn-primary">Edit</a>
-    <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">Delete</a>
+    {% if user.is_superuser %}
+        <a href="{% url 'update_post' post.pk %}" class="btn btn-primary">Edit</a>
+        <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
     <a href="{% url 'add_comment' post.pk %}" class="btn btn-secondary">Add comment</a>
     <hr>
     {% if post.comments.all %}
