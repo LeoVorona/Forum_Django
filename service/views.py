@@ -1,21 +1,39 @@
+import email
+import imp
 from operator import is_
 from django.shortcuts import render, redirect
+from django.conf import settings
+from forum_prj.settings import EMAIL_HOST_USER
 from service.models import Post, Comment 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .forms import PostForm, CommentForm, UserRegisterForm
+from .forms import PostForm, CommentForm, UserRegisterForm, MessageForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.core.mail import send_mail
+
 
 def index(req):
     return render(req, 'index.html')
 
 
 def about(req):
-    return render(req, 'about.html')
+    form = MessageForm()
+    if req.method == 'POST' :
+        form = MessageForm(req.POST)
+        if form.is_valid():
+            subject = form.cleaned_data.get('title')
+            body = form.cleaned_data.get('body')      
+            try:    
+                send_mail(subject, body, settings.EMAIL_HOST_USER, ['почта получателя'], fail_silently=False)
+                form.save()
+            except Exception as err:
+                print(str(err))
+            return redirect('index')
+    return render(req, 'about.html', {'form':form})
 
 class RegisterForm(SuccessMessageMixin, CreateView):
     success_message = '%(username)s was created successfully'

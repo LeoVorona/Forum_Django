@@ -129,4 +129,11 @@ LOGIN_URL = 'login'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+EMAIL_HOST = 'smtp.mail.ru'
+EMAIL_PORT = 2525
+EMAIL_HOST_USER = 'почта отправителя@mail.ru' 
+EMAIL_HOST_PASSWORD = 'пароль для внешних приложений'
+EMAIL_USE_TLS = True
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
