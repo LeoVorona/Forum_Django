@@ -16,6 +16,13 @@
     <div class="container">
         {% block content %}
             <h1>Forum</h1>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{message.tags}}" role="alert">
+                        {{ message }}
+                    </div>                       
+                {% endfor %}
+            {% endif %}
             {% if user.is_superuser %}
                 <a href="{% url 'create_post' %}" class="btn btn-primary ">Create New Post</a>
             {% endif %}
