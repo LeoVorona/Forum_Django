@@ -1,5 +1,9 @@
+import csv
+import datetime
+
 import email
 import imp
+from multiprocessing import context
 from operator import is_
 from django.shortcuts import render, redirect
 from django.conf import settings
@@ -10,11 +14,11 @@ from .forms import PostForm, CommentForm, UserRegisterForm, MessageForm
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.mail import send_mail
-
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
 
 def index(req):
     return render(req, 'index.html')
@@ -91,3 +95,22 @@ class AddCommentView(LoginRequiredMixin,CreateView):
     def form_valid(self, form):
         form.instance.post_id = self.kwargs['pk']
         return super().form_valid(form)
+
+def upload(req):
+    context = {}
+    if req.method == 'POST':
+        uploaded_file = req.FILES['file']
+        file = FileSystemStorage()
+        name = file.save(uploaded_file.name, uploaded_file)
+        context['url'] = file.url(name)
+    return render(req, 'upload.html', context)
+
+def download(req):
+    response = HttpResponse(content_type = 'text/csv')
+    writer = csv.writer(response)
+    writer.writerow(['title', 'description', 'created_at'])
+    for row in Post.objects.all().values_list('title', 'description', 'created_at'):
+        writer.writerow(row)
+    filename = str(datetime.datetime.now()) + 'posts.csv'
+    response['Content-Disposition'] = f'attachment; filename={filename}'    
+    return response
