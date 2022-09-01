@@ -1,5 +1,5 @@
 from distutils.log import error
-from urllib import response
+from urllib import request, response
 from django.shortcuts import render
 from rest_framework import viewsets
 from api import serializers
@@ -8,11 +8,27 @@ from api.serializers import CheckBoxSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from django.contrib.auth.models import User
+from rest_framework import authentication, permissions
+from rest_framework import generics, mixins
 
 
 #class CheckBoxViewSet(viewsets.ModelViewSet):
 #    queryset = CheckBox.objects.all()
 #    serializer_class = CheckBoxSerializer   
+
+class CheckBoxList(generics.GenericAPIView, mixins.ListModelMixin, mixins.CreateModelMixin):
+
+    queryset = CheckBox.objects.all()
+    serializer_class = CheckBoxSerializer 
+
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 @api_view(['GET'])
 def CheckBox_list(req):
