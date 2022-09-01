@@ -1,7 +1,30 @@
+from email.policy import default
+from typing_extensions import Required
 from rest_framework import serializers
 from api.models import CheckBox
 
 class CheckBoxSerializer(serializers.ModelSerializer):
+
+    title = serializers.SerializerMethodField()
     class Meta:
         model = CheckBox
-        fields = '__all__'
+        fields = ['name', 'is_cheked', 'title']
+
+    @staticmethod    
+    def get_title(obj):
+        return obj.name + " " +'python'
+
+
+
+class DataSerializer(serializers.Serializer):
+    title = serializers.CharField(required = False, allow_null=True, allow_blank=True)
+    attrs = serializers.JSONField(required = False)
+    type = serializers.CharField(required = False)
+    val_1 = serializers.IntegerField()
+    val_2 = serializers.IntegerField()
+
+    @staticmethod
+    def validate_type (type):
+        if not type in ['dict', 'list', 'tuple']:
+            raise serializers.ValidationError(f'{type} is not allowd') 
+        return type 
