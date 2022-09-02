@@ -5,14 +5,14 @@ from api.models import CheckBox
 
 class CheckBoxSerializer(serializers.ModelSerializer):
 
-    title = serializers.SerializerMethodField()
+    #title = serializers.SerializerMethodField()
     class Meta:
         model = CheckBox
-        fields = ['name', 'is_cheked', 'title']
+        fields = '__all__'
 
-    @staticmethod    
-    def get_title(obj):
-        return obj.name + " " +'python'
+#    @staticmethod    
+#     def get_title(obj):
+#        return obj.name + " " +'python'
 
 
 
