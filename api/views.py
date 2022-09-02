@@ -1,3 +1,5 @@
+import logging
+
 from distutils.log import error
 from urllib import request, response
 from django.shortcuts import render
@@ -14,13 +16,16 @@ from rest_framework import authentication, permissions
 from rest_framework import generics, mixins
 from api.utils import Sum
 
+logger = logging.getLogger('django')
+
 
 class CheckBoxViewSet(viewsets.ModelViewSet):
     queryset = CheckBox.objects.all()
     serializer_class = CheckBoxSerializer   
     @action(detail=False, methods=['GET'])
-    def limit(self, req, pk = None):
+    def limit(self, req, pk = None):      
         params = req.query_params
+        logger.info(f'Params : {params}')
         return Response({'res':params})
 
 

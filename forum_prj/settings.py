@@ -145,4 +145,51 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 2
 }
 
+
+LOGGING = {
+    'version':1,
+    'disable_existing_loggers':False,
+    'formatters':{
+        'simple':{
+            'format':'[%(asctime)s %(levelname)s %(message)s ]',
+            'datefmt': '%Y.%M.%d %H:%M:%S', 
+        },
+    },
+    'filters':{
+        'require_debug_true':{
+            '()':'django.utils.log.RequireDebugTrue'
+        },
+        'require_debug_false':{
+            '()':'django.utils.log.RequireDebugFalse'
+        },
+    },
+    'handlers':{
+        'console_prod':{
+            'class' : 'logging.StreamHandler', 
+            'formatter': 'simple',      
+            'filters': ['require_debug_false'],
+            'level': 'ERROR',
+        },
+        'console_debug':{
+            'class' : 'logging.StreamHandler', 
+            'formatter': 'simple',      
+            'filters': ['require_debug_true'],
+            'level': 'DEBUG',
+        },
+        'file':{
+            'class':'logging.FileHandler',
+            'filename': BASE_DIR /'logs/forum_api.log',
+            'level':'INFO',
+            'formatter': 'simple', 
+        },
+    },  
+    'loggers':{
+        'django':{
+            'handlers':['console_debug', 'file'],
+        },
+    }, 
+}
+
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
